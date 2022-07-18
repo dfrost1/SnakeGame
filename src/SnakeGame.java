@@ -9,6 +9,7 @@
  */
 public class SnakeGame {
     public static void main (String[]args){
-        System.out.println("testing here");
+//        System.out.println("testing here");
+        GameFrame frame = new GameFrame(); //create instance of gameframe
     }
 }
