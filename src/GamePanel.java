@@ -17,7 +17,7 @@ public class GamePanel extends JPanel implements ActionListener{
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 25; //size of objects in game
     static final int GAME_UNITS = (SCREEN_WIDTH*SCREEN_HEIGHT)/UNIT_SIZE; //how many units can fit into screen
-    static final int DELAY = 100;
+    static final int DELAY = 75;
     final int x[] = new int [GAME_UNITS];
     final int y[] = new int [GAME_UNITS];
     int bodyOfSnake = 6;
@@ -84,8 +84,8 @@ public class GamePanel extends JPanel implements ActionListener{
      */
     public void move(){
         for(int i=bodyOfSnake; i>0;i--){
-            x[i] = x[i]-1; //shift coordinates of array by 1
-            y[i] = y[i]-1;
+            x[i] = x[i-1]; //shift coordinates of array by 1
+            y[i] = y[i-1];
         }
         switch(direction){
             case 'U':
@@ -114,7 +114,35 @@ public class GamePanel extends JPanel implements ActionListener{
      * Method to check if the snake has collided
      */
     public void checkCollisions(){
+        for(int i= bodyOfSnake; i>0;i--){
+            // shows head collided with body
+            if((x[0] == x[i])&&(y[0]==y[i])){
+                running = false; // triggers game over
+            }
+        }
+        //checks if head touches border
+        if(x[0] < 0){
+            running = false;
+        }
         
+        //checkes if head touches right border
+        if(x[0] > SCREEN_WIDTH){
+            running = false;
+        }
+        
+        //checks if head touches top border
+        if(y[0] < 0){
+            running = false;
+        }
+        
+        //checks if head touches bottom border
+        if(y[0] > SCREEN_HEIGHT){
+            running = false;
+        }
+        
+        if(!running){
+            timer.stop();
+        }
     }
     
     /**
