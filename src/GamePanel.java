@@ -18,11 +18,12 @@ public class GamePanel extends JPanel implements ActionListener {
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 25; //size of objects in game
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE; //how many units can fit into screen
-    static final int DELAY = 500;
+    static final int P2_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE + 200; //how many units can fit into screen
+    static final int DELAY = 300;
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
-    final int x2[] = new int [GAME_UNITS];
-    final int y2[] = new int [GAME_UNITS];
+    final int x2[] = new int [P2_UNITS];
+    final int y2[] = new int [P2_UNITS];
     int bodyOfSnake1 = 6;
     int bodyOfSnake2 = 6;
     int applesEaten;
@@ -71,7 +72,7 @@ public class GamePanel extends JPanel implements ActionListener {
             g.drawLine((SCREEN_WIDTH/2), 0, (SCREEN_WIDTH/2), SCREEN_HEIGHT); //draw mid line
             
             g.setColor(Color.red);
-            g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE); //draw apple
+            g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE); //draw apple for P1
             
             g.setColor(Color.blue);
             g.fillOval(appleP2X, appleP2Y, UNIT_SIZE, UNIT_SIZE); //draw apple for P2
@@ -86,16 +87,17 @@ public class GamePanel extends JPanel implements ActionListener {
                 }
             }
             
-            for (int i = 0; i < bodyOfSnake2; i++) {
-                if (i == 0) { //head of snake
-                    g.setColor(Color.blue);
-                    g.fillRect(x2[i], y2[i], UNIT_SIZE, UNIT_SIZE);
-                } else {
-                    g.setColor(Color.red);
-                    g.fillRect(x2[i], y2[i], UNIT_SIZE, UNIT_SIZE);
-                }
-            }
-        g.setColor(Color.red);
+//            for (int i = 0; i < bodyOfSnake2; i++) {
+//                if (i == 0) { //head of snake
+//                    g.setColor(Color.blue);
+//                    g.fillRect(x2[i], y2[i], UNIT_SIZE, UNIT_SIZE);
+//                } else {
+//                    g.setColor(Color.red);
+//                    g.fillRect(x2[i], y2[i], UNIT_SIZE, UNIT_SIZE);
+//                }
+//            }
+            
+        g.setColor(Color.red); //gameover colour
         g.setFont(new Font("Ink Free", Font.BOLD, 40));
         FontMetrics metrics = getFontMetrics(g.getFont());
         g.drawString("Score:"+applesEaten, (SCREEN_WIDTH - metrics.stringWidth("Score: "+applesEaten))/2, g.getFont().getSize()); //places text in centre of screen
@@ -109,7 +111,7 @@ public class GamePanel extends JPanel implements ActionListener {
      */
     public void newAppleP1() {
         appleX = random.nextInt((int) ((SCREEN_WIDTH/2) / UNIT_SIZE)) * UNIT_SIZE;
-        appleY = random.nextInt((int) ((SCREEN_WIDTH/2) / UNIT_SIZE)) * UNIT_SIZE;
+        appleY = random.nextInt((int) ((SCREEN_WIDTH) / UNIT_SIZE)) * UNIT_SIZE;
     }
     
     /**
@@ -117,7 +119,7 @@ public class GamePanel extends JPanel implements ActionListener {
      */
     public void newAppleP2() {
         appleP2X = random.nextInt((int) ((SCREEN_WIDTH/2) / UNIT_SIZE)) * UNIT_SIZE + SCREEN_WIDTH/2;
-        appleP2Y = random.nextInt((int) ((SCREEN_WIDTH/2) / UNIT_SIZE)) * UNIT_SIZE + SCREEN_WIDTH/2;
+        appleP2Y = random.nextInt((int) ((SCREEN_WIDTH) / UNIT_SIZE)) * UNIT_SIZE;
     }
 
     /**
@@ -140,6 +142,27 @@ public class GamePanel extends JPanel implements ActionListener {
                 break;
             case 'R':
                 x[0] = x[0] + UNIT_SIZE;
+                break;
+        }
+    }
+    
+    public void moveP2() {
+        for (int i = bodyOfSnake2; i > 0; i--) {
+            x2[i] = x2[i - 1]; //shift coordinates of array by 1
+            y2[i] = y2[i - 1];
+        }
+        switch (direction) {
+            case 'U':
+                y2[0] = y2[0] - UNIT_SIZE; //y coordinate of head of snake
+                break;
+            case 'D':
+                y2[0] = y2[0] + UNIT_SIZE;
+                break;
+            case 'L':
+                x2[0] = x2[0] - UNIT_SIZE;
+                break;
+            case 'R':
+                x2[0] = x2[0] + UNIT_SIZE;
                 break;
         }
     }
@@ -213,6 +236,7 @@ public class GamePanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (running) {
             moveP1(); //move snake
+            moveP2();
             checkPoints();
             checkCollisions();
         }
