@@ -18,7 +18,7 @@ public class GamePanel extends JPanel implements ActionListener {
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 25; //size of objects in game
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE; //how many units can fit into screen
-    static final int P2_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE + 200; //how many units can fit into screen
+    static final int P2_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE ; //how many units can fit into screen
     static final int DELAY = 300;
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
@@ -32,9 +32,15 @@ public class GamePanel extends JPanel implements ActionListener {
     int appleP2X; //x coordinate apple for P2
     int appleP2Y; //y coordinate apple for P2
     char direction = 'R'; //direction of snake at start
+    char directionP2 = 'D'; //direction for P2
     boolean running = false;
+    boolean checkGame = false;
     Timer timer;
     Random random;
+    // Create JButton and JPanel
+    JButton button = new JButton("Replay?");
+
+
 
     GamePanel() {
         random = new Random();
@@ -43,12 +49,19 @@ public class GamePanel extends JPanel implements ActionListener {
         this.setFocusable(true);
         this.addKeyListener(new Keys());
         startGame();
+        if(!checkGame){
+            this.add(button);
+        }
+        
     }
 
     public void startGame() {
         newAppleP1(); //call new apple method to create new apple in game
         newAppleP2();
+        
+        x2[0] = 300;
         running = true;
+        checkGame =  true;
         timer = new Timer(DELAY, this);
         timer.start();
     }
@@ -87,15 +100,16 @@ public class GamePanel extends JPanel implements ActionListener {
                 }
             }
             
-//            for (int i = 0; i < bodyOfSnake2; i++) {
-//                if (i == 0) { //head of snake
-//                    g.setColor(Color.blue);
-//                    g.fillRect(x2[i], y2[i], UNIT_SIZE, UNIT_SIZE);
-//                } else {
-//                    g.setColor(Color.red);
-//                    g.fillRect(x2[i], y2[i], UNIT_SIZE, UNIT_SIZE);
-//                }
-//            }
+            for (int i = 0; i < bodyOfSnake2; i++) {
+                if (i == 0) { //head of snake
+                    g.setColor(Color.blue);
+                    g.fillRect(x2[i], y2[i], UNIT_SIZE, UNIT_SIZE);
+                } else{                  
+                    g.setColor(Color.yellow);           
+                    g.fillRect(x2[i], y2[i], UNIT_SIZE, UNIT_SIZE);
+                    
+                }
+            }
             
         g.setColor(Color.red); //gameover colour
         g.setFont(new Font("Ink Free", Font.BOLD, 40));
@@ -151,17 +165,18 @@ public class GamePanel extends JPanel implements ActionListener {
             x2[i] = x2[i - 1]; //shift coordinates of array by 1
             y2[i] = y2[i - 1];
         }
-        switch (direction) {
-            case 'U':
+
+        switch (directionP2) {
+            case 'W':
                 y2[0] = y2[0] - UNIT_SIZE; //y coordinate of head of snake
                 break;
-            case 'D':
+            case 'S':
                 y2[0] = y2[0] + UNIT_SIZE;
                 break;
-            case 'L':
+            case 'A':
                 x2[0] = x2[0] - UNIT_SIZE;
                 break;
-            case 'R':
+            case 'D':
                 x2[0] = x2[0] + UNIT_SIZE;
                 break;
         }
@@ -230,6 +245,10 @@ public class GamePanel extends JPanel implements ActionListener {
         g.setFont(new Font("Ink Free", Font.BOLD, 75));
         FontMetrics metrics2 = getFontMetrics(g.getFont());
         g.drawString("Game Over", (SCREEN_WIDTH - metrics2.stringWidth("Game Over"))/2, SCREEN_HEIGHT/2); //places text in centre of screen
+       
+        checkGame = false;
+        
+        
     }
 
     @Override
@@ -267,31 +286,6 @@ public class GamePanel extends JPanel implements ActionListener {
                     }
                     break;
                 case KeyEvent.VK_UP:
-                    if (direction != 'D') {
-                        direction = 'U';
-                    }
-                    break;
-            }
-        }
-        
-        public void p2KeyPressed(KeyEvent e) {
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_A:
-                    if (direction != 'R') {
-                        direction = 'L';
-                    }
-                    break;
-                case KeyEvent.VK_D:
-                    if (direction != 'L') {
-                        direction = 'R';
-                    }
-                    break;
-                case KeyEvent.VK_S:
-                    if (direction != 'U') {
-                        direction = 'D';
-                    }
-                    break;
-                case KeyEvent.VK_W:
                     if (direction != 'D') {
                         direction = 'U';
                     }
