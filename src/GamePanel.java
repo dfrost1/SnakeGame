@@ -31,10 +31,14 @@ public class GamePanel extends JPanel implements ActionListener {
     int appleY; //y coordinate of apple which will appear randomly
     int speedX; //x coordinate apple for P2
     int speedY; //y coordinate apple for P2
+    int pointX;
+    int pointY;
     char direction = 'R'; //direction of snake at start
     char directionP2 = 'D'; //direction for P2
     boolean running = false;
     boolean checkGame = false;
+    boolean power2 = true;
+    boolean power3 = true;
     Timer timer;
     Random random;
     // Create JButton and JPanel
@@ -58,9 +62,10 @@ public class GamePanel extends JPanel implements ActionListener {
     public void startGame() {
         newAppleP1(); //call new apple method to create new apple in game
         speedUp();
+        extraPoint();
         
         
-        x2[0] = 300;
+//        x2[0] = 300;
         running = true;
         checkGame =  true;
         timer = new Timer(DELAY, this);
@@ -81,20 +86,31 @@ public class GamePanel extends JPanel implements ActionListener {
                 g.drawLine(i * UNIT_SIZE, 0, i * UNIT_SIZE, SCREEN_HEIGHT);
                 g.drawLine(0, i * UNIT_SIZE, SCREEN_WIDTH, i * UNIT_SIZE);
             }
-            
-//            g.setColor(Color.blue);
-//            g.drawLine((SCREEN_WIDTH/2), 0, (SCREEN_WIDTH/2), SCREEN_HEIGHT); //draw mid line
+         
             
             g.setColor(Color.red);
             g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE); //draw apple for P1
             
+            //draw x2 speed powerup
             g.setColor(Color.blue);
             if(speedX != 0 && speedY != 0){
+                power2 = true;
                 g.fillRect(speedX, speedY, UNIT_SIZE  , UNIT_SIZE);
                 g.setColor(Color.yellow);
                 g.drawString("x2", (UNIT_SIZE + speedX - 18), (UNIT_SIZE + speedY -10));
+            }else {
+                power2 = false;
             }
-
+            
+            if(pointX != 0 && pointY != 0){
+                power3 = true;
+                g.setColor(Color.green);
+                g.fillOval(pointX, pointY, UNIT_SIZE, UNIT_SIZE); //draw apple for P1
+            } else {
+                power3 = false;
+            }
+            
+            //draw snake
             for (int i = 0; i < bodyOfSnake1; i++) {
                 if (i == 0) { //head of snake
                     g.setColor(Color.green);
@@ -104,17 +120,6 @@ public class GamePanel extends JPanel implements ActionListener {
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
                 }
             }
-            
-//            for (int i = 0; i < bodyOfSnake2; i++) {
-//                if (i == 0) { //head of snake
-//                    g.setColor(Color.blue);
-//                    g.fillRect(x2[200], y2[200], UNIT_SIZE, UNIT_SIZE);
-//                } else {                  
-//                    g.setColor(Color.yellow);           
-//                    g.fillRect(x2[200], y2[200], UNIT_SIZE, UNIT_SIZE);
-//                    
-//                }
-//            }
             
         g.setColor(Color.red); //gameover colour
         g.setFont(new Font("Ink Free", Font.BOLD, 40));
@@ -138,12 +143,26 @@ public class GamePanel extends JPanel implements ActionListener {
      * Method to generate coordinates of new apple when called
      */
     public void speedUp() {
-        int randomNumber = (int) (Math. random() * 30 + 1);
         speedX = random.nextInt((int) ((SCREEN_WIDTH/2) / UNIT_SIZE)) * UNIT_SIZE + SCREEN_WIDTH/2;
         speedY = random.nextInt((int) ((SCREEN_WIDTH) / UNIT_SIZE)) * UNIT_SIZE;
     }
     
-   
+    public void extraPoint(){
+        int randomNumber3 = (int) (Math. random() * 3 + 1);
+        int randomNumber4 = (int) (Math. random() * 3 + 1);
+        if(randomNumber3 == randomNumber4){
+            pointX = random.nextInt((int) ((SCREEN_WIDTH/2) / UNIT_SIZE)) * UNIT_SIZE + SCREEN_WIDTH/2;
+            pointY = random.nextInt((int) ((SCREEN_WIDTH) / UNIT_SIZE)) * UNIT_SIZE;        
+        }
+        
+        if(pointX == speedX && pointX == appleX){
+            extraPoint();
+        }
+        if(pointY == speedY && pointX == appleY){
+            extraPoint();
+        }
+    }
+    
 
     /**
      * Method to move the snake
@@ -185,16 +204,22 @@ public class GamePanel extends JPanel implements ActionListener {
                 timer = new Timer(DELAY, this);
                 timer.start();
             }
-            
-            int randomNumber1 = (int) (Math. random() * 10 + 1);
-            int randomNumber2 = (int) (Math. random() * 10 + 1);
-            if(randomNumber1 == randomNumber2 && DELAY != 100){
+            //if snake eats apple and x2 powerup not in effect, randomly create x2 powerup
+            int randomNumber1 = (int) (Math. random() * 2 + 1);
+            int randomNumber2 = (int) (Math. random() * 2 + 1);
+            if(randomNumber1 == randomNumber2 && DELAY == 200 && power2 != true){ 
+                System.out.println(speedX);
                 speedUp();
+            } 
+            
+            int randomNumber3 = (int) (Math. random() * 2+ 1);
+            int randomNumber4 = (int) (Math. random() * 2 + 1);
+            if(randomNumber3 == randomNumber4 && power3 != true){ 
+                extraPoint();
             }
-
-            
-            
         }
+        
+        //if eat x2 powerup
         if ((x[0] == speedX) && (y[0] == speedY)) {
             timer.stop();
             DELAY = 100;
@@ -203,6 +228,16 @@ public class GamePanel extends JPanel implements ActionListener {
             speedX = 0;
             speedY = 0;
         }
+        
+        //if eat extra point powerup
+        if ((x[0] == pointX) && (y[0] == pointY)) {
+            applesEaten++;
+            applesEaten++;
+            pointX = 0;
+            pointY = 0;
+        }
+        
+        
     }
 
     /**
