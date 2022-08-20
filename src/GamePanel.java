@@ -19,7 +19,7 @@ public class GamePanel extends JPanel implements ActionListener {
     static final int UNIT_SIZE = 25; //size of objects in game
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE; //how many units can fit into screen
     static final int P2_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE ; //how many units can fit into screen
-    static final int DELAY = 300;
+    static  int DELAY = 200;
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
     final int x2[] = new int [P2_UNITS];
@@ -88,10 +88,11 @@ public class GamePanel extends JPanel implements ActionListener {
             g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE); //draw apple for P1
             
             g.setColor(Color.blue);
-//            g.fillOval(speedX, speedY, UNIT_SIZE, UNIT_SIZE); //draw apple for P2
-            g.fillRect(speedX, speedY, UNIT_SIZE  , UNIT_SIZE);
-            g.setColor(Color.yellow);
-            g.drawString("x2", (UNIT_SIZE + speedX - 18), (UNIT_SIZE + speedY -10));
+            if(speedX != 0 && speedY != 0){
+                g.fillRect(speedX, speedY, UNIT_SIZE  , UNIT_SIZE);
+                g.setColor(Color.yellow);
+                g.drawString("x2", (UNIT_SIZE + speedX - 18), (UNIT_SIZE + speedY -10));
+            }
 
             for (int i = 0; i < bodyOfSnake1; i++) {
                 if (i == 0) { //head of snake
@@ -127,6 +128,7 @@ public class GamePanel extends JPanel implements ActionListener {
      * Method to generate coordinates of new apple when called
      */
     public void newAppleP1() {
+        
         appleX = random.nextInt((int) ((SCREEN_WIDTH/2) / UNIT_SIZE)) * UNIT_SIZE;
         appleY = random.nextInt((int) ((SCREEN_WIDTH) / UNIT_SIZE)) * UNIT_SIZE;
     }
@@ -135,9 +137,12 @@ public class GamePanel extends JPanel implements ActionListener {
      * Method to generate coordinates of new apple when called
      */
     public void speedUp() {
+        int randomNumber = (int) (Math. random() * 30 + 1);
         speedX = random.nextInt((int) ((SCREEN_WIDTH/2) / UNIT_SIZE)) * UNIT_SIZE + SCREEN_WIDTH/2;
         speedY = random.nextInt((int) ((SCREEN_WIDTH) / UNIT_SIZE)) * UNIT_SIZE;
     }
+    
+   
 
     /**
      * Method to move the snake
@@ -163,27 +168,6 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
     
-//    public void moveP2() {
-//        for (int i = bodyOfSnake2; i > 0; i--) {
-//            x2[i] = x2[i - 1]; //shift coordinates of array by 1
-//            y2[i] = y2[i - 1];
-//        }
-//
-//        switch (directionP2) {
-//            case 'W':
-//                y2[0] = y2[0] - UNIT_SIZE; //y coordinate of head of snake
-//                break;
-//            case 'S':
-//                y2[0] = y2[0] + UNIT_SIZE;
-//                break;
-//            case 'A':
-//                x2[0] = x2[0] - UNIT_SIZE;
-//                break;
-//            case 'D':
-//                x2[0] = x2[0] + UNIT_SIZE;
-//                break;
-//        }
-//    }
 
     /**
      * Method to check points of player
@@ -193,6 +177,20 @@ public class GamePanel extends JPanel implements ActionListener {
             bodyOfSnake1++;
             applesEaten++;
             newAppleP1();
+            if(DELAY == 100){
+                timer.stop();
+                DELAY = 200;
+                timer = new Timer(DELAY, this);
+                timer.start();
+            }
+        }
+        if ((x[0] == speedX) && (y[0] == speedY)) {
+            timer.stop();
+            DELAY = 100;
+            timer = new Timer(DELAY, this);
+            timer.start();
+            speedX = 0;
+            speedY = 0;
         }
     }
 
