@@ -18,12 +18,9 @@ public class GamePanel extends JPanel implements ActionListener {
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 25; //size of objects in game
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE; //how many units can fit into screen
-    static final int P2_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE ; //how many units can fit into screen
     static  int DELAY = 200;
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
-    final int x2[] = new int [P2_UNITS];
-    final int y2[] = new int [P2_UNITS];
     int bodyOfSnake1 = 6;
     int bodyOfSnake2 = 6;
     int applesEaten;
@@ -106,6 +103,8 @@ public class GamePanel extends JPanel implements ActionListener {
                 power3 = true;
                 g.setColor(Color.green);
                 g.fillOval(pointX, pointY, UNIT_SIZE, UNIT_SIZE); //draw apple for P1
+                g.setColor(Color.black);
+                g.drawString("2P", (UNIT_SIZE + pointX - 18), (UNIT_SIZE + pointY -10));
             } else {
                 power3 = false;
             }
@@ -148,12 +147,9 @@ public class GamePanel extends JPanel implements ActionListener {
     }
     
     public void extraPoint(){
-        int randomNumber3 = (int) (Math. random() * 3 + 1);
-        int randomNumber4 = (int) (Math. random() * 3 + 1);
-        if(randomNumber3 == randomNumber4){
-            pointX = random.nextInt((int) ((SCREEN_WIDTH/2) / UNIT_SIZE)) * UNIT_SIZE + SCREEN_WIDTH/2;
-            pointY = random.nextInt((int) ((SCREEN_WIDTH) / UNIT_SIZE)) * UNIT_SIZE;        
-        }
+        pointX = random.nextInt((int) ((SCREEN_WIDTH/2) / UNIT_SIZE)) * UNIT_SIZE + SCREEN_WIDTH/2;
+        pointY = random.nextInt((int) ((SCREEN_WIDTH) / UNIT_SIZE)) * UNIT_SIZE;        
+        
         
         if(pointX == speedX && pointX == appleX){
             extraPoint();
@@ -212,6 +208,7 @@ public class GamePanel extends JPanel implements ActionListener {
                 speedUp();
             } 
             
+            //if eat apple and no 2P powerup present, create 2P powerup
             int randomNumber3 = (int) (Math. random() * 2+ 1);
             int randomNumber4 = (int) (Math. random() * 2 + 1);
             if(randomNumber3 == randomNumber4 && power3 != true){ 
