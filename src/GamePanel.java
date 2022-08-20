@@ -59,6 +59,7 @@ public class GamePanel extends JPanel implements ActionListener {
         newAppleP1(); //call new apple method to create new apple in game
         speedUp();
         
+        
         x2[0] = 300;
         running = true;
         checkGame =  true;
@@ -173,6 +174,7 @@ public class GamePanel extends JPanel implements ActionListener {
      * Method to check points of player
      */
     public void checkPoints() {
+        //if snake eats an apple
         if ((x[0] == appleX) && (y[0] == appleY)) {
             bodyOfSnake1++;
             applesEaten++;
@@ -183,6 +185,15 @@ public class GamePanel extends JPanel implements ActionListener {
                 timer = new Timer(DELAY, this);
                 timer.start();
             }
+            
+            int randomNumber1 = (int) (Math. random() * 10 + 1);
+            int randomNumber2 = (int) (Math. random() * 10 + 1);
+            if(randomNumber1 == randomNumber2 && DELAY != 100){
+                speedUp();
+            }
+
+            
+            
         }
         if ((x[0] == speedX) && (y[0] == speedY)) {
             timer.stop();
