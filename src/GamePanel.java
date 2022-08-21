@@ -50,9 +50,11 @@ public class GamePanel extends JPanel implements ActionListener {
         this.setFocusable(true);
         this.addKeyListener(new Keys());
         startGame();
-        if(!checkGame){
+        if(running != false){
             this.add(button);
+            button.setVisible(false);
         }
+
         
     }
 
@@ -133,9 +135,15 @@ public class GamePanel extends JPanel implements ActionListener {
      * Method to generate coordinates of new apple when called
      */
     public void newAppleP1() {
-        
         appleX = random.nextInt((int) ((SCREEN_WIDTH/2) / UNIT_SIZE)) * UNIT_SIZE;
         appleY = random.nextInt((int) ((SCREEN_WIDTH) / UNIT_SIZE)) * UNIT_SIZE;
+        for (int i = 0; i < x.length; i++){
+            if(x[i] == appleX && y[i] == appleY){
+                appleX = random.nextInt((int) ((SCREEN_WIDTH/2) / UNIT_SIZE)) * UNIT_SIZE;
+                appleY = random.nextInt((int) ((SCREEN_WIDTH) / UNIT_SIZE)) * UNIT_SIZE;
+            }
+        }
+        
     }
     
     /**
@@ -230,6 +238,8 @@ public class GamePanel extends JPanel implements ActionListener {
         if ((x[0] == pointX) && (y[0] == pointY)) {
             applesEaten++;
             applesEaten++;
+            bodyOfSnake1++;
+            bodyOfSnake1++;
             pointX = 0;
             pointY = 0;
         }
@@ -291,9 +301,19 @@ public class GamePanel extends JPanel implements ActionListener {
         g.drawString("Game Over", (SCREEN_WIDTH - metrics2.stringWidth("Game Over"))/2, SCREEN_HEIGHT/2); //places text in centre of screen
        
         checkGame = false;
-        
-        
+        button.setVisible(true);
+        Clicklistener click= new Clicklistener();
+        button.addActionListener(click);     
     }
+        
+    private class Clicklistener implements ActionListener {
+        public void actionPerformed(ActionEvent e){
+            if (e.getSource() == button){                                  
+            }
+        }
+    }
+    
+    
 
     @Override
     public void actionPerformed(ActionEvent e) {
